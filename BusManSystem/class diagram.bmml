@@ -1,0 +1,36 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="666" measuredH="343" mockupW="645" mockupH="304">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::Accordion" x="21" y="39" w="150" h="206" measuredW="226" measuredH="240" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <text>Client%20Class%0A-%20+fname%3A%20String%0A-%20+lname%3A%20String%0A-%20+Id%20card%3A%20String%0A-%20+clientID%3A%20String%0Amethod%0A-%20-Client%28%29%0A-%20-Client%28String%2C%20String%2C%20String%2C%20String%29%0A-%20+setClientID%28String%29%0A-%20-getClientID%28%29%3A%20String%0A-%20+setClientFirstName%28String%29%0A-%20-getClientFirstName%28%29%3A%20String%0A-%20+setClientLastName%28String%29%20%0A-%20-getClientLastname%28%29%3A%20String%0A-%20getClient%28%29</text>
+        <value>0</value>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::Accordion" x="186" y="39" w="150" h="206" measuredW="154" measuredH="186" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <text>City%20Class%0A-%20+cityName%3A%20String%0A-%20+cityID%3A%20String%0Amethod%0A-%20-City%28String%2C%20String%29%0A-%20+setCityName%28String%29%0A-%20-getCityName%28%29%3A%20String%0A-%20+setCityID%28String%29%0A-%20-getCityID%28%29%3A%20String</text>
+        <value>0</value>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::Accordion" x="351" y="39" w="150" h="206" measuredW="198" measuredH="213" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <text>Buses%20Class%0A-%20+busID%3A%20String%0A-%20+busType%3A%20String%0A-%20+busSeatCapacity%3A%20int%0Amethod%0A-%20-Buses%28String%2C%20String%2C%20int%29%0A-%20+setBusID%28String%29%0A-%20-getBusID%28%29%3A%20String%0A-%20+setBusType%28String%29%0A-%20-getBusType%28%29%3A%20String%0A-%20+setBusSeatCapacity%28String%29%20%0A-%20-getBusSeatCapacity%28%29%3A%20String</text>
+        <value>0</value>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Accordion" x="516" y="39" w="150" h="304" measuredW="234" measuredH="375" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <text>QueryDatabase%20Class%0A-%20+URL%3A%20String%0A-%20+lUSERNAME%3A%20String%0A-%20+PASSWORD%3A%20String%0A-%20-selectAllCities%3APreparedStatement%0A-%20-selectBusInfo%3APreparedStatement%0A-%20-selectAllClients%3APreparedStatement%0A-%20+addCities%3APreparedStatement%0A-%20+boarding%3APreparedStatement%0A-%20-report%3APreparedStatement%0Amethod%0A-%20+setClientID%28String%29%0A-%20-getClientID%28%29%3A%20String%0A-%20+setClientFirstName%28String%29%0A-%20-getClientFirstName%28%29%3A%20String%0A-%20+setClientLastName%28String%29%20%0A-%20-getClientLastname%28%29%3A%20String%0A-%20getClient%28%29</text>
+        <value>0</value>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

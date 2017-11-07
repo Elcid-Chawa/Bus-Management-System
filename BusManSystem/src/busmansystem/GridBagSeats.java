@@ -7,7 +7,7 @@ package busmansystem;
 
 /**
  *
- * @author SUSY
+ * @author Elcid Chawa
  */
 
 import javax.swing.ImageIcon;
@@ -89,48 +89,68 @@ public class GridBagSeats extends JFrame {
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         addComponent(comboBox); 
         
-        //get index from selected bus andset capacity
+        //get index from selected bus and set capacity
         comboBox.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
+            
+            //initialize gridbag components 
             index = comboBox.getSelectedIndex();
             capacity = buses.get(index).getBusSeatCapacity();
-            if(capacity != 0 ){
-                
-            statusLabel.setText("" + comboBox.getItemAt(comboBox.getSelectedIndex()));
-            addComponent(statusLabel);
-            final JRadioButton[] buttons = new JRadioButton[capacity];
-            GridButtonGroup = new ButtonGroup();
+
+                    // start if
+                    if(capacity != 0 ){                
+                    statusLabel.setText("" + comboBox.getItemAt(comboBox.getSelectedIndex()));          
+                    addComponent(statusLabel);
+                    final JRadioButton[] buttons = new JRadioButton[capacity];
+                    GridButtonGroup = new ButtonGroup();
+                    
         
-        // initialize buttons with label and icons and add to GridButtonGroup
-        for (int count =0; count < buttons.length; count++){
-            buttons[count] = new JRadioButton();
-            buttons[count].setIcon(green);
-            buttons[count].setText("" + count);
-            buttons[count].setHorizontalTextPosition(JRadioButton.CENTER);
-            GridButtonGroup.add(buttons[count]);
-        } // end button initalization
+                    // initialize buttons with label and icons and add to GridButtonGroup
+                    for (int count =0; count < buttons.length; count++){
+                        buttons[count] = new JRadioButton();
+                        buttons[count].setIcon(green);
+                        int seat = count+1;
+                        buttons[count].setText("" + seat);
+                        buttons[count].setHorizontalTextPosition(JRadioButton.CENTER);
+                        GridButtonGroup.add(buttons[count]);
+                    } // end button initalization
         
-        // register events for GridGroupButton
-        for (int count =0; count < buttons.length; count++){
-            buttons[count].addItemListener(
-            new ButtonsHandler(buttons[count]));
-        }       
-        
-        // loop buttons to get position
-        for (int i=0; i < buttons.length; i++){
-            if (4 == i%5){
-                constraints.gridwidth = 0;
-                addComponent(buttons[i]);
-            } else {
-               constraints.gridwidth = 1;
-               addComponent(buttons[i]); 
-            }
+                     // register events for GridGroupButton
+                    for (int count =0; count < buttons.length; count++){
+                        buttons[count].addItemListener(
+                        new ButtonsHandler(buttons[count]));
+                    }       
+                                
+            switch(capacity){
+                case 15:
+                    // loop buttons to get position
+                    for (int i=0; i < 15; i++){
+                        if (2 == i%3){
+                            constraints.gridwidth = 0;
+                            addComponent(buttons[i]);
+                            } else {
+                            constraints.gridwidth = 1;
+                            addComponent(buttons[i]); 
+                        }
+                    }
+                    break;
+                case 19:
+                    for (int i=0; i < 19; i++){
+                        if (4 == i%5){
+                            constraints.gridwidth = 0;
+                            addComponent(buttons[i]);
+                            } else {
+                            constraints.gridwidth = 1;
+                            addComponent(buttons[i]); 
+                        }
+                    }
+                    break;
+            }//end swtich  
+                    } else {
+                        statusLabel.setText("Selcet a Bus");}// end else
+            } 
             
-        }
-                }
-            else {statusLabel.setText("Selcet a Bus");}
-            }
-        });
+        }); // end action listerner
         
         
     } // end GridBagFrame consructor
@@ -157,11 +177,16 @@ public class GridBagSeats extends JFrame {
         add(component); // add component
     }
     
+    private void resetComponent(Component component){
+        layout.setConstraints(component, constraints);
+        remove(component);
+    }
     public static void main(String[] args)
     {
         GridBagSeats gridBagFrame = new GridBagSeats();
         gridBagFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gridBagFrame.setSize(300, 200);
         gridBagFrame.setVisible(true);
+        gridBagFrame.isResizable();
     }
 }

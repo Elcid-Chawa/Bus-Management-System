@@ -10,18 +10,25 @@ package busmansystem;
  * @author Elcid Chawa
  */
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
 import javax.swing.ImageIcon;
 import javax.swing.Icon;
-import java.sql.*;
-import java.util.Date;
+import java.sql.Date;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.awt.print.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class BusManPanel extends javax.swing.JPanel {
    
@@ -29,13 +36,16 @@ public class BusManPanel extends javax.swing.JPanel {
     List<Buses> buses = new ArrayList<Buses>();
     Client clients = new Client();
     QueryDatabase query = new QueryDatabase();
+    List<Passenger> passengers = new ArrayList<Passenger>();
     
+    GridLayout grid = new GridLayout();
     GridBagConstraints busGridPanelConstraints = new GridBagConstraints();
+    DefaultTableModel model = new DefaultTableModel();
     
     Icon green; 
     Icon red; 
     Boolean check;
-    
+    public enum names{namefield, cityfield, busfield, datefield}
     
     /**
      * Creates new form BusManPanel
@@ -45,7 +55,10 @@ public class BusManPanel extends javax.swing.JPanel {
         green = new ImageIcon( getClass().getResource("/components/images/green.jpg") );
         red = new ImageIcon( getClass().getResource("/components/images/red.jpg") );
         check = true;
+        model = null;
         inititialize_all();
+        tFromComboBox.setSelectedItem("Buea");
+        rFromComboBox.setSelectedItem("Buea");
     }
     
     private void inititialize_all() {
@@ -67,7 +80,10 @@ public class BusManPanel extends javax.swing.JPanel {
             this.tBusComboBox.addItem(b.getBusID());
             this.reportComboBox.addItem(b.getBusID());
         }
-    }
+        
+        passengers = query.getAllPassengers();
+                
+    } 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -76,12 +92,9 @@ public class BusManPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jTextField7 = new javax.swing.JTextField();
-        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("bussystem?zeroDateTimeBehavior=convertToNullPU").createEntityManager();
-        bustableQuery = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT b FROM Bustable b");
-        bustableList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : bustableQuery.getResultList();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         systemPanel = new javax.swing.JTabbedPane();
         clientBookinPanel = new javax.swing.JPanel();
         clientPanel = new javax.swing.JPanel();
@@ -91,12 +104,10 @@ public class BusManPanel extends javax.swing.JPanel {
         fnameTextField = new javax.swing.JTextField();
         lnameTextField = new javax.swing.JTextField();
         idCardTextField = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
         jSeparator3 = new javax.swing.JSeparator();
         travelPanel = new javax.swing.JPanel();
-        travelLabel = new javax.swing.JLabel();
         from = new javax.swing.JLabel();
         to = new javax.swing.JLabel();
         tFromComboBox = new javax.swing.JComboBox<>();
@@ -108,19 +119,16 @@ public class BusManPanel extends javax.swing.JPanel {
         seatCapLabel = new javax.swing.JLabel();
         seatsLeftLabel = new javax.swing.JLabel();
         seatsLeftTextField = new javax.swing.JTextField();
-        busGridPanel = new javax.swing.JPanel();
         seatGridLabel = new javax.swing.JLabel();
         tBusComboBox = new javax.swing.JComboBox<>();
+        seatCapTextField = new javax.swing.JTextField();
+        seatNo = new javax.swing.JTextField();
+        seatGridPanel = new javax.swing.JScrollPane();
         planTripButton = new javax.swing.JButton();
         resetFieldsButton = new javax.swing.JButton();
-        adminPanel = new javax.swing.JPanel();
-        jXLoginPane1 = new org.jdesktop.swingx.JXLoginPane();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         reportgenPanel = new javax.swing.JPanel();
         reportPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -128,27 +136,29 @@ public class BusManPanel extends javax.swing.JPanel {
         rToComboBox = new javax.swing.JComboBox<>();
         rFromComboBox = new javax.swing.JComboBox<>();
         reportComboBox = new javax.swing.JComboBox<>();
-        reportBusType = new javax.swing.JTextField();
         generateListButton = new javax.swing.JButton();
         listPanel = new javax.swing.JScrollPane();
         list = new javax.swing.JTable();
         print_list = new javax.swing.JButton();
+        save_list = new javax.swing.JButton();
 
         jTextField7.setText("jTextField7");
 
         setBackground(new java.awt.Color(97, 212, 195));
+        setMaximumSize(new java.awt.Dimension(1024, 768));
 
-        systemPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 5));
+        systemPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         systemPanel.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         systemPanel.setToolTipText("system panel");
         systemPanel.setPreferredSize(new java.awt.Dimension(850, 750));
         systemPanel.setRequestFocusEnabled(false);
 
         clientBookinPanel.setBackground(new java.awt.Color(97, 212, 195));
-        clientBookinPanel.setPreferredSize(new java.awt.Dimension(850, 700));
+        clientBookinPanel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
 
         clientPanel.setBackground(new java.awt.Color(36, 47, 65));
-        clientPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        clientPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Client Information", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Gothic", 1, 14), new java.awt.Color(255, 255, 255))); // NOI18N
+        clientPanel.setInheritsPopupMenu(true);
 
         fName.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
         fName.setForeground(new java.awt.Color(255, 255, 255));
@@ -163,14 +173,18 @@ public class BusManPanel extends javax.swing.JPanel {
         idCard.setText("ID Card No:");
 
         fnameTextField.setBackground(new java.awt.Color(36, 47, 65));
-        fnameTextField.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
+        fnameTextField.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         fnameTextField.setForeground(new java.awt.Color(255, 255, 255));
-        fnameTextField.setBorder(null);
+        fnameTextField.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        fnameTextField.setCaretColor(java.awt.Color.white);
+        fnameTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         lnameTextField.setBackground(new java.awt.Color(36, 47, 65));
-        lnameTextField.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
+        lnameTextField.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         lnameTextField.setForeground(new java.awt.Color(255, 255, 255));
-        lnameTextField.setBorder(null);
+        lnameTextField.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        lnameTextField.setCaretColor(java.awt.Color.white);
+        lnameTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lnameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lnameTextFieldActionPerformed(evt);
@@ -178,13 +192,11 @@ public class BusManPanel extends javax.swing.JPanel {
         });
 
         idCardTextField.setBackground(new java.awt.Color(36, 47, 65));
-        idCardTextField.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
+        idCardTextField.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         idCardTextField.setForeground(new java.awt.Color(255, 255, 255));
-        idCardTextField.setBorder(null);
-
-        jLabel4.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Client Information");
+        idCardTextField.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        idCardTextField.setCaretColor(java.awt.Color.white);
+        idCardTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout clientPanelLayout = new javax.swing.GroupLayout(clientPanel);
         clientPanel.setLayout(clientPanelLayout);
@@ -196,52 +208,51 @@ public class BusManPanel extends javax.swing.JPanel {
                     .addComponent(jSeparator3)
                     .addComponent(lnameTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(fnameTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(clientPanelLayout.createSequentialGroup()
-                        .addGroup(clientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(fName, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(idCard, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lName))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(idCardTextField, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(idCardTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(clientPanelLayout.createSequentialGroup()
+                        .addGroup(clientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(idCard, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lName)
+                            .addComponent(fName, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 263, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         clientPanelLayout.setVerticalGroup(
             clientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(clientPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(fName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(fnameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lnameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addComponent(idCard)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(idCardTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
 
-        travelPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        travelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Travel Plan", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Gothic", 1, 14))); // NOI18N
 
-        travelLabel.setText("Travel Plan");
+        from.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        from.setText("Current City");
 
-        from.setText("From");
+        to.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        to.setText("Desitination City");
 
-        to.setText("To");
-
+        tFromComboBox.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         tFromComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select City ..." }));
+        tFromComboBox.setEnabled(false);
         tFromComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tFromComboBoxActionPerformed(evt);
@@ -250,6 +261,7 @@ public class BusManPanel extends javax.swing.JPanel {
 
         tToComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select City ..." }));
 
+        depatureDate.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         depatureDate.setText("Depature Date");
 
         tSelectDepatureDate.addActionListener(new java.awt.event.ActionListener() {
@@ -262,70 +274,55 @@ public class BusManPanel extends javax.swing.JPanel {
         travelPanel.setLayout(travelPanelLayout);
         travelPanelLayout.setHorizontalGroup(
             travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(travelPanelLayout.createSequentialGroup()
-                .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, travelPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(travelPanelLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
+                        .addComponent(depatureDate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tSelectDepatureDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(travelPanelLayout.createSequentialGroup()
+                        .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(to, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(from, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                         .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(depatureDate)
-                            .addGroup(travelPanelLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(to)
-                                    .addComponent(from))))
-                        .addGap(53, 53, 53)
-                        .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(tSelectDepatureDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(tFromComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(tToComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(travelPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(travelLabel)))
-                .addContainerGap(46, Short.MAX_VALUE))
+                            .addComponent(tToComboBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tFromComboBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(32, 32, 32))
         );
         travelPanelLayout.setVerticalGroup(
             travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(travelPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(travelLabel)
-                .addGap(39, 39, 39)
+                .addGap(8, 8, 8)
                 .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tFromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(from))
-                .addGap(39, 39, 39)
+                    .addComponent(from)
+                    .addComponent(tFromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(33, 33, 33)
                 .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tToComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(to))
-                .addGap(58, 58, 58)
+                    .addComponent(to)
+                    .addComponent(tToComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(33, 33, 33)
                 .addGroup(travelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(depatureDate)
-                    .addComponent(tSelectDepatureDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tSelectDepatureDate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        busPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        busPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Bus Information", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Gothic", 1, 14))); // NOI18N
 
-        busIDLabel.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        busIDLabel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         busIDLabel.setText("Bus ID");
 
-        seatCapLabel.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        seatCapLabel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         seatCapLabel.setText("Seating Capacity");
 
-        seatsLeftLabel.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        seatsLeftLabel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         seatsLeftLabel.setText("Number of seats left");
 
         seatsLeftTextField.setEditable(false);
 
-        busGridPanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        busGridPanel.setVerifyInputWhenFocusTarget(false);
-        java.awt.GridBagLayout busGridPanelLayout = new java.awt.GridBagLayout();
-        busGridPanelLayout.columnWidths = new int[] {6};
-        busGridPanelLayout.rowHeights = new int[] {5};
-        busGridPanelLayout.columnWeights = new double[] {1.0};
-        busGridPanelLayout.rowWeights = new double[] {1.0};
-        busGridPanel.setLayout(busGridPanelLayout);
-
-        seatGridLabel.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        seatGridLabel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         seatGridLabel.setText("Bus Seating Grid");
 
         tBusComboBox.setSelectedItem(null);
@@ -335,6 +332,10 @@ public class BusManPanel extends javax.swing.JPanel {
             }
         });
 
+        seatCapTextField.setEditable(false);
+
+        seatNo.setMaximumSize(new java.awt.Dimension(6, 27));
+
         javax.swing.GroupLayout busPanelLayout = new javax.swing.GroupLayout(busPanel);
         busPanel.setLayout(busPanelLayout);
         busPanelLayout.setHorizontalGroup(
@@ -342,43 +343,46 @@ public class BusManPanel extends javax.swing.JPanel {
             .addGroup(busPanelLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(busIDLabel)
-                    .addComponent(seatCapLabel)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(seatGridLabel)
-                        .addComponent(seatsLeftLabel)))
-                .addGap(29, 29, 29)
-                .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tBusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(seatsLeftTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, busPanelLayout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(busGridPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                    .addComponent(seatGridPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 431, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(busPanelLayout.createSequentialGroup()
+                        .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(busIDLabel)
+                            .addComponent(seatCapLabel)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(seatGridLabel)
+                                .addComponent(seatsLeftLabel)))
+                        .addGap(29, 29, 29)
+                        .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(tBusComboBox, 0, 115, Short.MAX_VALUE)
+                                .addComponent(seatCapTextField)
+                                .addComponent(seatsLeftTextField))
+                            .addComponent(seatNo, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         busPanelLayout.setVerticalGroup(
             busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(busPanelLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addGap(17, 17, 17)
                 .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(busIDLabel)
-                    .addComponent(tBusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(seatCapLabel)
-                .addGap(45, 45, 45)
+                    .addComponent(tBusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(seatCapLabel)
+                    .addComponent(seatCapTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
                 .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(seatsLeftLabel)
                     .addComponent(seatsLeftTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
-                .addComponent(seatGridLabel)
-                .addGap(31, 31, 31)
-                .addComponent(busGridPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGroup(busPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(seatGridLabel)
+                    .addComponent(seatNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addComponent(seatGridPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
-
-        busGridPanel.getAccessibleContext().setAccessibleName("");
-        busGridPanel.getAccessibleContext().setAccessibleDescription("");
 
         planTripButton.setText("Plan");
         planTripButton.addActionListener(new java.awt.event.ActionListener() {
@@ -398,173 +402,163 @@ public class BusManPanel extends javax.swing.JPanel {
         clientBookinPanel.setLayout(clientBookinPanelLayout);
         clientBookinPanelLayout.setHorizontalGroup(
             clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, clientBookinPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(planTripButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(resetFieldsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(62, 62, 62))
             .addGroup(clientBookinPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(clientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(travelPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(busPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addGap(29, 29, 29)
+                .addGroup(clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(travelPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clientPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, clientBookinPanelLayout.createSequentialGroup()
+                        .addComponent(planTripButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(resetFieldsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(101, 101, 101))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, clientBookinPanelLayout.createSequentialGroup()
+                        .addComponent(busPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         clientBookinPanelLayout.setVerticalGroup(
             clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(clientBookinPanelLayout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addGroup(clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap()
+                .addGroup(clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(clientBookinPanelLayout.createSequentialGroup()
                         .addComponent(clientPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(travelPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(busPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(planTripButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resetFieldsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(46, 46, 46)
+                        .addComponent(travelPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(29, 29, 29))
+                    .addGroup(clientBookinPanelLayout.createSequentialGroup()
+                        .addComponent(busPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(clientBookinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(planTripButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(resetFieldsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
-        systemPanel.addTab("Client Booking", clientBookinPanel);
-
-        jXLoginPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
-
-        jButton4.setText("Login");
-
-        jButton5.setText("Reset");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout adminPanelLayout = new javax.swing.GroupLayout(adminPanel);
-        adminPanel.setLayout(adminPanelLayout);
-        adminPanelLayout.setHorizontalGroup(
-            adminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(adminPanelLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(adminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jXLoginPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(adminPanelLayout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5)))
-                .addContainerGap(406, Short.MAX_VALUE))
-        );
-        adminPanelLayout.setVerticalGroup(
-            adminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(adminPanelLayout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(jXLoginPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(adminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
-                .addContainerGap(403, Short.MAX_VALUE))
-        );
-
-        systemPanel.addTab("Admin Panel", adminPanel);
+        systemPanel.addTab("Client Revervation", clientBookinPanel);
 
         reportgenPanel.setBackground(new java.awt.Color(97, 212, 195));
+        reportgenPanel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
 
-        reportPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
+        reportPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Query Report", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Century Gothic", 1, 14))); // NOI18N
 
+        jLabel1.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel1.setText("BusID");
 
-        jLabel2.setText("Bus Name / Type");
+        jLabel8.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        jLabel8.setText("Current City");
 
-        jLabel8.setText("From");
+        jLabel9.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        jLabel9.setText("Destination City");
 
-        jLabel9.setText("To");
-
-        jLabel12.setText("Date");
+        jLabel12.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        jLabel12.setText("Departure Date");
 
         rToComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select City" }));
 
         rFromComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select City ..." }));
+        rFromComboBox.setEnabled(false);
 
         reportComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Bus..." }));
 
-        reportBusType.setText("jTextField1");
-
         generateListButton.setText("Generate Bording List");
+        generateListButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                generateListButtonMouseClicked(evt);
+            }
+        });
+        generateListButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateListButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout reportPanelLayout = new javax.swing.GroupLayout(reportPanel);
         reportPanel.setLayout(reportPanelLayout);
         reportPanelLayout.setHorizontalGroup(
             reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(reportPanelLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, reportPanelLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
                 .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(reportPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(reportBusType, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(reportPanelLayout.createSequentialGroup()
                         .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel1))
-                        .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(reportPanelLayout.createSequentialGroup()
-                                .addGap(66, 66, 66)
-                                .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(rFromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(reportComboBox, 0, 144, Short.MAX_VALUE)
-                                        .addComponent(rDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addComponent(rToComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(reportPanelLayout.createSequentialGroup()
-                                .addGap(53, 53, 53)
-                                .addComponent(generateListButton)))))
-                .addContainerGap(69, Short.MAX_VALUE))
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addGap(0, 33, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(generateListButton)
+                    .addComponent(rFromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rToComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(reportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17))
         );
         reportPanelLayout.setVerticalGroup(
             reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(reportPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(reportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(reportPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1))
+                    .addComponent(reportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
-                    .addComponent(rDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
-                .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(rFromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(rDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rToComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
+                    .addComponent(jLabel8)
+                    .addComponent(rFromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(34, 34, 34)
                 .addGroup(reportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(reportBusType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
+                    .addComponent(rToComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(86, 86, 86)
                 .addComponent(generateListButton)
-                .addGap(87, 87, 87))
+                .addContainerGap(116, Short.MAX_VALUE))
         );
 
-        listPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4), "Boarding row List", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("Aquatico", 1, 18))); // NOI18N
+        listPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4), "Passenger List", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Century Gothic", 1, 14))); // NOI18N
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, bustableQuery, org.jdesktop.beansbinding.ObjectProperty.create(), list, org.jdesktop.beansbinding.BeanProperty.create("elements"));
-        bindingGroup.addBinding(binding);
-        binding.bind();
+        list.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Seat No"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        list.setColumnSelectionAllowed(true);
         listPanel.setViewportView(list);
+        list.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        print_list.setText("Print");
+        print_list.setIcon(new javax.swing.ImageIcon(getClass().getResource("/components/images/print-icon.png"))); // NOI18N
+        print_list.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        print_list.setIconTextGap(0);
         print_list.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 print_listActionPerformed(evt);
+            }
+        });
+
+        save_list.setIcon(new javax.swing.ImageIcon(getClass().getResource("/components/images/save_icon.png"))); // NOI18N
+        save_list.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        save_list.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                save_listActionPerformed(evt);
             }
         });
 
@@ -573,27 +567,32 @@ public class BusManPanel extends javax.swing.JPanel {
         reportgenPanelLayout.setHorizontalGroup(
             reportgenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(reportgenPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(reportPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(reportgenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(reportgenPanelLayout.createSequentialGroup()
-                        .addGap(376, 376, 376)
-                        .addComponent(print_list, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(289, 289, 289)
+                        .addComponent(save_list, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(print_list, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(reportgenPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(reportPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14)
-                        .addComponent(listPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(44, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(listPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         reportgenPanelLayout.setVerticalGroup(
             reportgenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(reportgenPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(reportgenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(reportPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(listPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(reportgenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(reportgenPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(reportPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(listPanel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(print_list, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addGroup(reportgenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(print_list, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(save_list, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         systemPanel.addTab("Report", reportgenPanel);
@@ -604,20 +603,18 @@ public class BusManPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(systemPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 803, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(systemPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 927, Short.MAX_VALUE)
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(systemPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 623, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(systemPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE)
+                .addGap(24, 24, 24))
         );
 
         systemPanel.getAccessibleContext().setAccessibleName("Client Reservation");
-
-        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void lnameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lnameTextFieldActionPerformed
@@ -628,10 +625,6 @@ public class BusManPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_tSelectDepatureDateActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
-
     private void tFromComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tFromComboBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tFromComboBoxActionPerformed
@@ -641,37 +634,53 @@ public class BusManPanel extends javax.swing.JPanel {
         fnameTextField.setText(null);
         lnameTextField.setText(null);
         idCardTextField.setText(null);
-        tBusComboBox.setSelectedItem("Select Bus...");
-        tFromComboBox.setSelectedItem("Select City ...");
-        tToComboBox.setSelectedItem("Select City ...");
+        tBusComboBox.setSelectedIndex(0);
+        tToComboBox.setSelectedIndex(0);
+        tSelectDepatureDate.setDate(null);
         
     }//GEN-LAST:event_resetFieldsButtonMouseClicked
 
     private void planTripButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_planTripButtonActionPerformed
+        int index;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         final String stringDate = dateFormat.format(tSelectDepatureDate.getDate());
         String fname = fnameTextField.getText();
-        String lname = lnameTextField.getText();
+        String lname = lnameTextField.getText();        
         String id = idCardTextField.getText();
         String fromCity  = tFromComboBox.getSelectedItem().toString();
+        
         String toCity =  tToComboBox.getSelectedItem().toString();
+        index = tToComboBox.getSelectedIndex();
+        String city = cities.get(index).getCityId();
+        
         String bus = tBusComboBox.getSelectedItem().toString();
          
         final java.sql.Date selectedDate = java.sql.Date.valueOf(stringDate); 
         
         System.out.println("Selected date: " + selectedDate.toString());
         
-        clients = query.insertClient(id, fname, lname, 00);
-        query.bookClient(id, buses.get(tBusComboBox.getSelectedIndex()).getBusID(), 
-                8, cities.get(tToComboBox.getSelectedIndex()).getCityId(), selectedDate);
+        clients = query.insertClient(id, fname, lname); // get Client info
+        //save client info in client table 
+        
+        query.bookClient(
+                        id,    
+                        buses.get(tBusComboBox.getSelectedIndex()).getBusID(), 
+                        Integer.parseInt(seatNo.getText()), 
+                        cities.get(tToComboBox.getSelectedIndex()).getCityId(), 
+                        selectedDate
+        ); // book client to create a passenger updates boards table
+           // get clientID = id, set busID, get seatNo = 8,
+           // set departure date
+        //query.clearTableTest();   
+        
         JOptionPane.showMessageDialog(null, "Client Names: " + fname + " " 
-                + lname + " \n Bus: " + bus + " \n Destination City: " + toCity + ".", 
+                + lname + " \n Bus: " + bus + "\n Current City: " + fromCity + " \n Destination City: " + toCity + ".", 
                 "Confirm Reservation", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_planTripButtonActionPerformed
 
     private void print_listActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_print_listActionPerformed
         
-        MessageFormat header = new MessageFormat("Report Head");
+        MessageFormat header = new MessageFormat("Bus Service Name");
         MessageFormat footer = new MessageFormat("Page number");
         try{
             list.print(JTable.PrintMode.NORMAL, header, footer);
@@ -685,46 +694,100 @@ public class BusManPanel extends javax.swing.JPanel {
         selectedBus = tBusComboBox.getSelectedItem().toString();
         index = tBusComboBox.getSelectedIndex();
         capacity = buses.get(index).getBusSeatCapacity();
-        if (index !=0){
+        
+        this.seatCapTextField.setText(Integer.toString(capacity));
+        
+        
+        if (index !=0){ 
+           seatCapTextField.setText("" + capacity);
            JOptionPane.showMessageDialog(null, "You selected a bus "
                    + selectedBus + " with capacity = " 
-                   + capacity + " seats.", "seats", JOptionPane.PLAIN_MESSAGE);
-           
-           
+                   + capacity + " seats.", "seats", JOptionPane.PLAIN_MESSAGE); 
         }       
     }//GEN-LAST:event_tBusComboBoxActionPerformed
 
+    private void generateListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateListButtonActionPerformed
+        // get date, bus, destination city from screen
+        // add to the JTable
+        int index;
+        index = rToComboBox.getSelectedIndex();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final String stringDate = dateFormat.format(rDatePicker.getDate());
+        final java.sql.Date selectedDate = java.sql.Date.valueOf(stringDate);
+        
+        String bus = reportComboBox.getSelectedItem().toString();
+        String destination = cities.get(index).getCityId();   
 
+       passengers = new ArrayList<Passenger>();
+       query.clearTableTest();
+       query.makeReservation(bus, selectedDate, destination);
+       passengers = query.getReservation(bus, selectedDate, destination);
+       
+        
+         model = (DefaultTableModel) list.getModel();
+         while (model.getRowCount() > 0){
+             model.removeRow(0);
+         }
+         Object[] row = new Object [2];
+         for(int i=0; i<passengers.size(); i++){
+             row[0] = passengers.get(i).getNames();
+             row[1] = passengers.get(i).getSeat();
+             model.addRow(row);
+         }
+       
+       // JOptionPane.showMessageDialog(null, "Departure for "
+         //          + destination + " with bus number = " 
+           //        + bus + " on " + stringDate +".", "seats", JOptionPane.PLAIN_MESSAGE);
+       
+    }//GEN-LAST:event_generateListButtonActionPerformed
+
+    private void save_listActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_listActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_save_listActionPerformed
+
+    private void generateListButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_generateListButtonMouseClicked
+        // TODO add your handling code here:
+       
+    }//GEN-LAST:event_generateListButtonMouseClicked
+
+    // check if either names fields are filled
+    public String checkNames(){
+        
+        if( fnameTextField.getText() == null || lnameTextField.getText() == null)
+        {
+            return "names";
+        }
+        return "ok";
+    }
+    
+    // check if bus is selected
+    
+    
+    // check if date is selected
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel adminPanel;
-    private javax.swing.JPanel busGridPanel;
     private javax.swing.JLabel busIDLabel;
     private javax.swing.JPanel busPanel;
-    private java.util.List<busmansystem.Bustable> bustableList;
-    private javax.persistence.Query bustableQuery;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel clientBookinPanel;
     private javax.swing.JPanel clientPanel;
     private javax.swing.JLabel depatureDate;
-    private javax.persistence.EntityManager entityManager;
     private javax.swing.JLabel fName;
     private javax.swing.JTextField fnameTextField;
     private javax.swing.JLabel from;
     private javax.swing.JButton generateListButton;
     private javax.swing.JLabel idCard;
     private javax.swing.JTextField idCardTextField;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextField jTextField7;
-    private org.jdesktop.swingx.JXLoginPane jXLoginPane1;
     private javax.swing.JLabel lName;
     private javax.swing.JTable list;
     private javax.swing.JScrollPane listPanel;
@@ -734,13 +797,16 @@ public class BusManPanel extends javax.swing.JPanel {
     private org.jdesktop.swingx.JXDatePicker rDatePicker;
     private javax.swing.JComboBox<String> rFromComboBox;
     private javax.swing.JComboBox<String> rToComboBox;
-    private javax.swing.JTextField reportBusType;
     private javax.swing.JComboBox<String> reportComboBox;
     private javax.swing.JPanel reportPanel;
     private javax.swing.JPanel reportgenPanel;
     private javax.swing.JButton resetFieldsButton;
+    private javax.swing.JButton save_list;
     private javax.swing.JLabel seatCapLabel;
+    private javax.swing.JTextField seatCapTextField;
     private javax.swing.JLabel seatGridLabel;
+    private javax.swing.JScrollPane seatGridPanel;
+    private javax.swing.JTextField seatNo;
     private javax.swing.JLabel seatsLeftLabel;
     private javax.swing.JTextField seatsLeftTextField;
     private javax.swing.JTabbedPane systemPanel;
@@ -749,8 +815,6 @@ public class BusManPanel extends javax.swing.JPanel {
     private org.jdesktop.swingx.JXDatePicker tSelectDepatureDate;
     private javax.swing.JComboBox<String> tToComboBox;
     private javax.swing.JLabel to;
-    private javax.swing.JLabel travelLabel;
     private javax.swing.JPanel travelPanel;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

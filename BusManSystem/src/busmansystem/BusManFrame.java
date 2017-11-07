@@ -15,12 +15,18 @@ import javax.swing.JFrame;
 
 
 public class BusManFrame extends JFrame{
+    private Login login;
+    
     BusManPanel systemPanel;
+    
     // constructor for BusManFrame
     public BusManFrame(){
-       super( "Bus Management System" );
+        
+        super( "Bus Management System" );
+        
+        login = new Login(this, true);
+               
        setLayout ( new FlowLayout() );
-       
        systemPanel = new BusManPanel();
        add( systemPanel );
     }
@@ -28,8 +34,9 @@ public class BusManFrame extends JFrame{
     
     public static void main( String[] args){
         BusManFrame busSystem = new BusManFrame();
+        busSystem.login.setVisible(true);
         busSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        busSystem.setSize(900,800);
+        busSystem.setSize(1024,768);
         busSystem.setVisible(true);
     }
     

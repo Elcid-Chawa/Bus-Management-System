@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Class Buses
+ * This class creats Bus objects with 
+ * the bus tyoe and seat number.
  */
 package busmansystem;
 
@@ -26,28 +26,31 @@ public class Buses {
         setBusSeatCapacity(seatCapacity);
     } // end constructor for Buses
     
-    // setters and getters for Buses information
+    // Setters and getters for Buses information
+    // (i.e busID, busType and busSeatCapacity).
+   
     public void setBusID(String bID){
         busID = bID;
-    }
-    
-    public void setBusType(String bType){
-        busType = bType;
-    }
-    
-    public void setBusSeatCapacity(int seatCapacity){
-        busSeatCapacity = seatCapacity;
     }
     
     public String getBusID(){
         return busID;
     }
     
+      public void setBusType(String bType){
+        busType = bType;
+    }
+    
     public String getBusType(){
         return busType;
     }
     
+    public void setBusSeatCapacity(int seatCapacity){
+        busSeatCapacity = seatCapacity;
+    }
+    
     public int getBusSeatCapacity(){
         return busSeatCapacity;
-    }
+    } 
+      
 }

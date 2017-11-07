@@ -13,8 +13,7 @@ public class Client {
     private String clientID;
     private String firstName;
     private String lastName;
-    private int phoneNumber;
-    
+
     //constructor
     public Client()
     {
@@ -22,11 +21,10 @@ public class Client {
     }
     
     // constructor
-    public Client(String clientID, String firstName, String lastName, 
-            int phoneNumber){
+    public Client(String clientID, String firstName, String lastName){
         setClientID(clientID);
         setFirstName(firstName);
-        setPhoneNumber(phoneNumber);
+        setLastName(lastName);
     }
     
     public void setClientID(String clientID){
@@ -45,19 +43,12 @@ public class Client {
         return firstName;
     }
     
-    public void setlastName(String lastName){
+    public void setLastName(String lastName){
         this.lastName = lastName;
     }
     
     public String getLastName(){
         return lastName;
-    }
-    
-    public void setPhoneNumber(int phoneNumber){
-        this.phoneNumber = phoneNumber;
-    }
-    
-    public int getPhoneNumber(){
-        return phoneNumber;
-    }
+    } 
+
 }
