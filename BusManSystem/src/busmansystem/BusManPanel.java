@@ -456,7 +456,7 @@ public class BusManPanel extends javax.swing.JPanel {
         jLabel12.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel12.setText("Departure Date");
 
-        rToComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select City" }));
+        rToComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select City Here" }));
 
         rFromComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select City ..." }));
         rFromComboBox.setEnabled(false);
